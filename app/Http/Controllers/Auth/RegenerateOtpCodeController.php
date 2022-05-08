@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 
-class RegisterController extends Controller
+class RegenerateOtpCodeController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -17,18 +17,18 @@ class RegisterController extends Controller
     public function __invoke(Request $request)
     {
         $request->validate([
-            'email' => 'required|unique:users,email|email',
-            'name'  => 'required'
+            'email'  => 'required'
         ]);
 
-        $data_request = $request->all();
-        $user = User::create($data_request);
+        $user = User::where('email', $request->email)->first();
+
+        $user->generate_otp_code();
         
         $data['user'] = $user;
         
         return response()->json([
            'response_code' => '00',
-           'response_message' => 'user baru berhasil didaftarkan, silahkan cek email untuk melihat kode OTP',
+           'response_message' => 'otp baru berhasil digenerate, silahkan cek email untuk melihat kode OTP',
            'data' => $data 
         ]);
     }
